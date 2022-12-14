@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWatchDog", "JWatchDog\JWatchDog.csproj", "{1DD4801A-144D-4442-BEC5-0ACA2D6A7D53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTest", "LibTest\LibTest.csproj", "{B6CAB02C-4A64-40B7-A368-9D67479F95F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1DD4801A-144D-4442-BEC5-0ACA2D6A7D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD4801A-144D-4442-BEC5-0ACA2D6A7D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD4801A-144D-4442-BEC5-0ACA2D6A7D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD4801A-144D-4442-BEC5-0ACA2D6A7D53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6CAB02C-4A64-40B7-A368-9D67479F95F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6CAB02C-4A64-40B7-A368-9D67479F95F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6CAB02C-4A64-40B7-A368-9D67479F95F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6CAB02C-4A64-40B7-A368-9D67479F95F5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB55A789-F8D8-4E89-B087-0570372AB901}
+	EndGlobalSection
+EndGlobal
