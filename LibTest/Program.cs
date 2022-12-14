@@ -1,4 +1,7 @@
 ﻿using JWatchDog;
+using JWatchDog.TouTiao;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using static System.Net.Mime.MediaTypeNames;
 
 internal static class Program
@@ -9,10 +12,18 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        JWatchDog.Logger logger = new JWatchDog.Logger();
-        logger.Write("test info", Logger.LogLevel.Info);
-        logger.Write("test warn", Logger.LogLevel.Warn);
-        Console.WriteLine("finish");
-        Console.ReadLine();
+        Logger logger = new Logger();
+        logger.OnLogWrite += log;
+        logger.Write("info test");
+        logger.Write("warn test", Logger.LogLevel.Warn);
+        logger.Write("error test", Logger.LogLevel.Error);
+    }
+
+    static void log(string str,JWatchDog.Logger.LogLevel level)
+    {
+        if(level > Logger.LogLevel.Warn)
+        {
+            Console.WriteLine(str);
+        }
     }
 }

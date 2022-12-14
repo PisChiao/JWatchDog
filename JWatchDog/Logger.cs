@@ -63,10 +63,10 @@ namespace JWatchDog
         }
 
         public enum LogLevel{
-            Info,
-            Warn,
-            Error,
-            Fatal
+            Info = 0,
+            Warn = 1,
+            Error = 2,
+            Fatal = 3
         }
 
         // 定义写日志事件方便更新控件

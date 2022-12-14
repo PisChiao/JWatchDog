@@ -3,7 +3,7 @@ using OpenQA.Selenium.Chrome;
 
 namespace JWatchDog.TouTiao
 {
-    internal static class OptCols
+    public static class OptCols
     {
         private static Logger logger = new Logger().Instance;
         /// <summary>

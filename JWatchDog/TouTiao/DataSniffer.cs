@@ -12,11 +12,27 @@ namespace JWatchDog.TouTiao
         /// <summary>
         /// 浏览器插件缓存目录，默认为./Cache
         /// </summary>
-        public static string CacheDir { get; set; } = Environment.CurrentDirectory + "\\Cache\\";
+        public string CacheDir { get; set; } = System.Environment.CurrentDirectory + "\\Cache\\";
         /// <summary>
         /// 浏览器插件所用通讯端口，默认0为随机
         /// </summary>
         public int BrowerPort { get; set; } = 0;
+
+        /// <summary>
+        /// 构建一个新的DataSnifer对象
+        /// </summary>
+        /// <param name="cacheDir">浏览器缓存目录</param>
+        /// <param name="browerPort">通讯端口</param>
+        public DataSniffer(string cacheDir, int browerPort)
+        {
+            CacheDir = cacheDir;
+            BrowerPort = browerPort;
+        }
+        public DataSniffer()
+        {
+            CacheDir = System.Environment.CurrentDirectory + "\\Cache\\" ;
+            BrowerPort = 0;
+        }
 
         /// <summary>
         /// 获取指定日期的数据
@@ -101,7 +117,7 @@ namespace JWatchDog.TouTiao
         /// </summary>
         /// <param name="driver">当前操作用的浏览器</param>
         /// <returns>读取到的头条数据对象，page部分为最后一页，数据部分为全部</returns>
-        public static TTStatsList ReadAllData(ref ChromeDriver driver)
+        private static TTStatsList ReadAllData(ref ChromeDriver driver)
         {
             TTStatsList aStatsList = new TTStatsList();
             aStatsList = ReadData(ref driver);
@@ -120,7 +136,7 @@ namespace JWatchDog.TouTiao
         /// <param name="driver">当前操作用的浏览器</param>
         /// <returns>读取到的头条数据对象</returns>
         /// <exception cref="Exception">无法读取数据时抛出异常，可能为登录失效或读取不到数据</exception>
-        public static TTStatsList ReadData(ref ChromeDriver driver)
+        private static TTStatsList ReadData(ref ChromeDriver driver)
         {
             // 等待网络响应
             for (int i = 0; i < 10; i++)
