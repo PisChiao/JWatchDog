@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JWatchDog.TouTiao
+namespace JWatchDog.TouTiao.StatsList
 {
 #pragma warning disable CS8618
     public class Pagination
@@ -2234,6 +2234,7 @@ namespace JWatchDog.TouTiao
 
     public class Stats_listItem
     {
+        public string advertiser_remark { get; set; }
         /// <summary>
         /// 
         /// </summary>

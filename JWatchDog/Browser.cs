@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebDriverManager.DriverConfigs.Impl;
+using WebDriverManager;
 
 namespace JWatchDog
 {
@@ -44,7 +46,7 @@ namespace JWatchDog
             performance = true;
             hideCommandPromptWindow = false;
 #endif
-
+            new DriverManager().SetUpDriver(new ChromeConfig());
             ChromeDriverService service = ChromeDriverService.CreateDefaultService(System.Environment.CurrentDirectory.ToString());
             if(hideCommandPromptWindow)
             {
@@ -53,6 +55,7 @@ namespace JWatchDog
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--ignore-certificate-error");
             options.AddArgument("--ignore-ssl-errors");
+            options.AddArgument("--no-sandbox");
             if (headless)
             {
                 options.AddArgument("--headless");

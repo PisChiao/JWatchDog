@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using OpenQA.Selenium.Chromium;
+using JWatchDog.TouTiao.StatsList;
 
 namespace JWatchDog.TouTiao
 {
@@ -48,69 +49,77 @@ namespace JWatchDog.TouTiao
             ChromeDriver driver = browser.SetupBrower(true,true,true);
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(20);
-
-            driver.Navigate().GoToUrl("https://business.oceanengine.com/site/promotion?#/account");
-            //选择所需的日期
-            if (daysBeforeToday > 0)
+            try
             {
-                IWebElement calendarButton = driver.FindElement(By.ClassName("bui-icon-calendar"));
-                driver.ExecuteScript("arguments[0].click();", calendarButton);
-                IWebElement calendarBar = driver.FindElement(By.ClassName("bui-shortcuts-list"));
-                string needDay = DateTime.Now.AddDays(daysBeforeToday * -1).ToString("yyyy.MM.dd");
-                IReadOnlyCollection<IWebElement> calendar = driver.FindElements(By.ClassName("mx-calendar"));
-                foreach (IWebElement calendarElement in calendar)
+                driver.Navigate().GoToUrl("https://business.oceanengine.com/site/promotion?#/account");
+                //选择所需的日期
+                if (daysBeforeToday > 0)
+                {
+                    IWebElement calendarButton = driver.FindElement(By.ClassName("bui-icon-calendar"));
+                    driver.ExecuteScript("arguments[0].click();", calendarButton);
+                    IWebElement calendarBar = driver.FindElement(By.ClassName("bui-shortcuts-list"));
+                    string needDay = DateTime.Now.AddDays(daysBeforeToday * -1).ToString("yyyy.MM.dd");
+                    IReadOnlyCollection<IWebElement> calendar = driver.FindElements(By.ClassName("mx-calendar"));
+                    foreach (IWebElement calendarElement in calendar)
+                    {
+                        try
+                        {
+                            IWebElement dayButton = calendarElement.FindElements(By.TagName("td")).Where(o => o.GetAttribute("title") == needDay).First();
+                            driver.ExecuteScript("arguments[0].click();", dayButton);
+                            driver.ExecuteScript("arguments[0].click();", dayButton);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            continue;
+                        }
+                    }
+                    // 检查日期选择是否正确
+                    IWebElement dateArea = driver.FindElement(By.ClassName("mx-datepicker-range")).FindElement(By.TagName("input"));
+                    if (!dateArea.GetAttribute("value").Contains(needDay))
+                    {
+                        driver.Quit();
+                        throw new Exception("无法选择指定的日期");
+                    }
+                }
+
+                // 添加所需的列
+                foreach (string col in needCols)
+                {
+                    OptCols.NeedCol(ref driver, col);
+                }
+
+                //检测是否处于loading状态
+                for (int i = 0; i < 10; i++)
                 {
                     try
                     {
-                        IWebElement dayButton = calendarElement.FindElements(By.TagName("td")).Where(o => o.GetAttribute("title") == needDay).First();
-                        driver.ExecuteScript("arguments[0].click();", dayButton);
-                        driver.ExecuteScript("arguments[0].click();", dayButton);
-                        break;
+                        IWebElement loading = driver.FindElement(By.ClassName("byted-loading"));
+                        if (loading.GetCssValue("display") == "none")
+                        {
+                            break;
+                        }
+                        Thread.Sleep(3000);
                     }
                     catch (Exception ex)
                     {
-                        continue;
+                        driver.Quit();
+                        throw new Exception("登录信息失效：" + ex.Message);
                     }
                 }
-                // 检查日期选择是否正确
-                IWebElement dateArea = driver.FindElement(By.ClassName("mx-datepicker-range")).FindElement(By.TagName("input"));
-                if (!dateArea.GetAttribute("value").Contains(needDay))
-                {
-                    driver.Quit();
-                    throw new Exception("无法选择指定的日期");
-                }
-            }
 
-            // 添加所需的列
-            foreach (string col in needCols)
+
+                // 获取数据
+                nowStats = ReadAllData(ref driver);
+                driver.Quit();
+                return nowStats;
+            }
+            catch(Exception ex)
             {
-                OptCols.NeedCol(ref driver, col);
+                driver.Quit();
+                throw;
             }
-
-            //检测是否处于loading状态
-            for (int i = 0; i < 10; i++)
-            {
-                try
-                {
-                    IWebElement loading = driver.FindElement(By.ClassName("byted-loading"));
-                    if (loading.GetCssValue("display") == "none")
-                    {
-                        break;
-                    }
-                    Thread.Sleep(3000);
-                }
-                catch (Exception ex)
-                {
-                    driver.Quit();
-                    throw new Exception("登录信息失效：" + ex.Message);
-                }
-            }
-
-
-            // 获取数据
-            nowStats = ReadAllData(ref driver);
-            driver.Quit();
-            return nowStats;
+            
         }
         /// <summary>
         /// 从当前页开始，依次读取所有页的数据
