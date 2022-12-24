@@ -114,3 +114,26 @@ JWatchDog.TouTiao.OptCols.TryAddCol(ref ChromeDriver driver, string colName)
 ```
 
 通过NeedCol方法可以自动检测列是否存在，如果不存在则会调用TryAddCol尝试增加指定的列。
+
+-----
+### 支持操作ini文件便于存储配置信息
+
+```C#
+//写入
+public static bool Write(string filePath, string section, string key, string? val);
+//删除键
+public static bool DeleteKey(string filePath, string section, string key);
+//删除区段
+public static bool DeleteSection(string filePath, string section);
+//读取值
+public static string ReadValue(string filePath, string section, string key);
+//读取区段
+public static List<string> ReadSections(string filePath);
+//读取所有键
+public static List<string> ReadKeys(string filePath, string section);
+```
+
+调用实例
+```c#
+JWatchDog.IniFile.Write("D:\\Config\\c.ini", "Account", "Name", "张三");
+```
