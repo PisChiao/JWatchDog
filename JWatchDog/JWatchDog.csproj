@@ -12,10 +12,10 @@
 	<RepositoryUrl>https://github.com/PisChiao/JWatchDog</RepositoryUrl>
 	<PackageTags>TouTiao;AD;广告;今日头条;巨量引擎;数据爬虫</PackageTags>
 	 <PackageReadmeFile>README.md</PackageReadmeFile>
-	 <Version>1.0.2</Version>
+	 <Version>1.0.3</Version>
 	 <Authors>PisChiao</Authors>
 	 <RepositoryType>git</RepositoryType>
-	 <PackageReleaseNotes>增加了对ini文件的读写支持，方便进行配置保存，同时在调用浏览器驱动实例时增加了drivermanager，以实现没有WebDriver的时候自动下载。</PackageReleaseNotes>
+	 <PackageReleaseNotes>添加了对巨量引擎后台新版本数据的支持，目前新版本后台正在灰度上线状态，部分账号尚未开通，需根据实际情况选用。</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

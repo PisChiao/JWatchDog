@@ -2,6 +2,16 @@
 
 一个方便获取广告后台数据的工具，使用Selenium浏览器插件，目前支持今日头条巨量引擎管家账号推广页面数据获取。
 
+## 更新内容
+
+### 1.0.2
+
+增加了对巨量引擎新版本的数据支持，如果后台为新版本，会自动选择“全部”选项以获取完整数据。
+
+使用新版后台时，将DataSniffer类改为DataSnifferN，OptCols类改为OptColsN，TTStatsList类改为TTStatsListN。
+
+数据结构可查看TTStatsListN的结构，或参考https://business.oceanengine.com/nbs/api/bm/promotion/ad/get_bidding_account_list接口的返回内容。
+
 ## 使用方法
 -----
 ### 获取一个Selenium浏览器驱动实例

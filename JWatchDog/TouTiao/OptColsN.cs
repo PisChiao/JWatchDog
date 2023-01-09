@@ -3,7 +3,7 @@ using OpenQA.Selenium.Chrome;
 
 namespace JWatchDog.TouTiao
 {
-    public static class OptCols
+    public static class OptColsN
     {
         private static Logger logger = new Logger().Instance;
         /// <summary>
@@ -16,7 +16,7 @@ namespace JWatchDog.TouTiao
         {
             try
             {
-                IWebElement sec_cnt_col = driver.FindElements(By.ClassName("table-header")).Where(o => o.GetAttribute("outerText") == colName).First();
+                IWebElement sec_cnt_col = driver.FindElements(By.ClassName("ovui-th__column-sorter")).Where(o => o.Text == colName).First();
                 if (sec_cnt_col is not null)
                 {
                     return true;
@@ -26,7 +26,7 @@ namespace JWatchDog.TouTiao
                     throw new Exception("所需列不存在，准备添加。");
                 }
             }
-            catch 
+            catch
             {
                 logger.Write("正在添加不存在的列：" + colName);
                 try
@@ -34,10 +34,10 @@ namespace JWatchDog.TouTiao
                     TryAddCol(ref driver, colName);
                     return true;
                 }
-                catch (Exception ex2)
+                catch (Exception ex)
                 {
 
-                    logger.Write("检测列错误：" + ex2.Message);
+                    logger.Write("添加列错误：" + ex.Message);
                     return false;
                 }
             }
@@ -50,17 +50,24 @@ namespace JWatchDog.TouTiao
         /// <param name="colName">列名</param>
         public static void TryAddCol(ref ChromeDriver driver, string colName)
         {
-            IWebElement colConfig = driver.FindElement(By.ClassName("bui-icon-_promotion_cols"));
+            IWebElement colConfig = driver.FindElements(By.ClassName("ovui-button--default-fill")).Where(o => o.Text == "自定义列").First();
             driver.ExecuteScript("arguments[0].click();", colConfig);
-            IWebElement colSelect = driver.FindElements(By.ClassName("bui-checkbox-input-label")).Where(o => o.GetAttribute("outerText") == colName).First();
+            IWebElement colSelect = driver.FindElements(By.ClassName("ovui-checkbox__label")).Where(o => o.Text == colName).First();
             driver.ExecuteScript("arguments[0].click();", colSelect);
-            IWebElement confirmBtn = driver.FindElement(By.ClassName("emit-btn"));
+            IWebElement confirmBtn = driver.FindElements(By.ClassName("ovui-button--primary-fill")).Where(o => o.Text == "保存").First();
             driver.ExecuteScript("arguments[0].click();", confirmBtn);
             // 等待加载完成或超时之后再返回
             for (int i = 0; i < 10; i++)
             {
-                IWebElement loading = driver.FindElement(By.ClassName("byted-loading"));
-                if (loading.GetCssValue("display") == "none")
+                try
+                {
+                    IWebElement loading = driver.FindElement(By.ClassName("ovui-icon__loading"));
+                    if (loading.GetCssValue("display") == "none")
+                    {
+                        break;
+                    }
+                }
+                catch
                 {
                     break;
                 }
