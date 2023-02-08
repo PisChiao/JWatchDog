@@ -40,10 +40,14 @@ namespace JWatchDog.TouTiao
         /// <summary>
         /// 
         /// </summary>
+        public string advertiser_remark { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public decimal advertiser_id { get; set; }
 
         /// <summary>
-        /// 在投-麦迪克-ios-02户-02mdk
+        /// 
         /// </summary>
         public string advertiser_name { get; set; }
 

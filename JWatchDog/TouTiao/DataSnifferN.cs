@@ -53,6 +53,7 @@ namespace JWatchDog.TouTiao
             try
             {
                 driver.Navigate().GoToUrl("https://business.oceanengine.com/site/promotion/ad/all/account");
+                
                 //选择所需的日期
                 if (daysBeforeToday > 0)
                 {
@@ -87,11 +88,23 @@ namespace JWatchDog.TouTiao
                     
                 }
 
-                // 添加所需的列
+                // 打开自定义列界面
+                IWebElement colConfig = driver.FindElements(By.ClassName("ovui-button--default-fill")).Where(o => o.Text == "自定义列").First();
+                driver.ExecuteScript("arguments[0].click();", colConfig);
+
+
+                // 核对并添加所需的列
                 foreach (string col in needCols)
                 {
-                    OptColsN.NeedCol(ref driver, col);
+                    IWebElement colSelect = driver.FindElements(By.ClassName("ovui-checkbox--md")).Where(o => o.Text == col).First();
+                    if (!colSelect.GetDomAttribute("class").Contains("ovui-checkbox--checked"))
+                    {
+                        driver.ExecuteScript("arguments[0].click();", colSelect);
+                        logger.Write("添加不存在的列：" + col);
+                    }
                 }
+                IWebElement confirmBtn = driver.FindElements(By.ClassName("ovui-button--primary-fill")).Where(o => o.Text == "保存").First();
+                driver.ExecuteScript("arguments[0].click();", confirmBtn);
 
                 IsLoading(ref driver);
 
