@@ -39,15 +39,11 @@ namespace JWatchDog
         /// <param name="performance">是否抓取网络通讯日志，默认为true</param>
         /// <param name="hideCommandPromptWindow">是否隐藏命令行窗口，默认为true</param>
         /// <returns>Chrome浏览器对象</returns>
-        public ChromeDriver SetupBrower(bool headless, bool performance = true, bool hideCommandPromptWindow = true)
+        public ChromeDriver SetupBrower(bool headless = true, bool performance = true, bool hideCommandPromptWindow = true)
         {
-#if DEBUG
-            headless = false;
-            performance = true;
-            hideCommandPromptWindow = false;
-#endif
             new DriverManager().SetUpDriver(new ChromeConfig());
-            ChromeDriverService service = ChromeDriverService.CreateDefaultService(System.Environment.CurrentDirectory.ToString());
+            string path = Encoding.UTF8.GetString( Encoding.Default.GetBytes(System.Environment.CurrentDirectory.ToString()));
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService(path);
             if(hideCommandPromptWindow)
             {
                 service.HideCommandPromptWindow = true;
@@ -58,7 +54,7 @@ namespace JWatchDog
             options.AddArgument("--no-sandbox");
             if (headless)
             {
-                options.AddArgument("--headless");
+                options.AddArgument("--headless=new");
             }
             if (BrowerPort > 0)
             {
@@ -73,7 +69,7 @@ namespace JWatchDog
                     IsCollectingNetworkEvents = true
                 };
             }
-            return new ChromeDriver(service, options);
+            return new ChromeDriver(service, options); 
         }
     }
 }

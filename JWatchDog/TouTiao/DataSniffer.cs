@@ -42,11 +42,11 @@ namespace JWatchDog.TouTiao
         /// <param name="needCols">需要额外添加的列名称数组</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public TTStatsList GetData(int daysBeforeToday, string[] needCols)
+        public TTStatsList GetData(int daysBeforeToday, string[] needCols,bool isDebug = false)
         {
             TTStatsList nowStats = new TTStatsList();
             Browser browser = new Browser(CacheDir,BrowerPort);
-            ChromeDriver driver = browser.SetupBrower(true,true,true);
+            ChromeDriver driver = browser.SetupBrower(!isDebug, true, !isDebug);
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             try

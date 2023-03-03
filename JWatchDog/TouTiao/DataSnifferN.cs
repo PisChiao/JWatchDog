@@ -43,17 +43,36 @@ namespace JWatchDog.TouTiao
         /// <param name="needCols">需要额外添加的列名称数组</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public TTStatsListN GetData(int daysBeforeToday, string[] needCols)
+        public TTStatsListN GetData(int daysBeforeToday, string[] needCols,bool isDebug = false)
         {
             TTStatsListN nowStats = new TTStatsListN();
             Browser browser = new Browser(CacheDir, BrowerPort);
-            ChromeDriver driver = browser.SetupBrower(true, true, true);
+            ChromeDriver driver = browser.SetupBrower(!isDebug, true, !isDebug);
 
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             try
             {
                 driver.Navigate().GoToUrl("https://business.oceanengine.com/site/promotion/ad/all/account");
-                
+               
+                // 打开自定义列界面
+                IWebElement colConfig = driver.FindElements(By.ClassName("ovui-button--default-fill")).Where(o => o.Text == "自定义列").First();
+                driver.ExecuteScript("arguments[0].click();", colConfig);
+
+
+                // 核对并添加所需的列
+                foreach (string col in needCols)
+                {
+                    IWebElement colSelect = driver.FindElements(By.ClassName("ovui-checkbox--md")).Where(o => o.Text == col).First();
+                    if (!colSelect.GetDomAttribute("class").Contains("ovui-checkbox--checked"))
+                    {
+                        driver.ExecuteScript("arguments[0].click();", colSelect);
+                        logger.Write("添加不存在的列：" + col);
+                    }
+                }
+                IWebElement confirmBtn = driver.FindElements(By.ClassName("ovui-button--primary-fill")).Where(o => o.Text == "保存").First();
+                driver.ExecuteScript("arguments[0].click();", confirmBtn);
+
+                IsLoading(ref driver);
                 //选择所需的日期
                 if (daysBeforeToday > 0)
                 {
@@ -77,7 +96,7 @@ namespace JWatchDog.TouTiao
                     }
                     // 检查日期选择是否正确
                     ReadOnlyCollection<IWebElement> dateArea = driver.FindElement(By.ClassName("ovui-custom-input__content")).FindElements(By.ClassName("ovui-input"));
-                    foreach(IWebElement dateAreaElement in dateArea)
+                    foreach (IWebElement dateAreaElement in dateArea)
                     {
                         if (!dateAreaElement.GetAttribute("value").Contains(needDay))
                         {
@@ -85,26 +104,9 @@ namespace JWatchDog.TouTiao
                             throw new Exception("无法选择指定的日期");
                         }
                     }
-                    
+
                 }
 
-                // 打开自定义列界面
-                IWebElement colConfig = driver.FindElements(By.ClassName("ovui-button--default-fill")).Where(o => o.Text == "自定义列").First();
-                driver.ExecuteScript("arguments[0].click();", colConfig);
-
-
-                // 核对并添加所需的列
-                foreach (string col in needCols)
-                {
-                    IWebElement colSelect = driver.FindElements(By.ClassName("ovui-checkbox--md")).Where(o => o.Text == col).First();
-                    if (!colSelect.GetDomAttribute("class").Contains("ovui-checkbox--checked"))
-                    {
-                        driver.ExecuteScript("arguments[0].click();", colSelect);
-                        logger.Write("添加不存在的列：" + col);
-                    }
-                }
-                IWebElement confirmBtn = driver.FindElements(By.ClassName("ovui-button--primary-fill")).Where(o => o.Text == "保存").First();
-                driver.ExecuteScript("arguments[0].click();", confirmBtn);
 
                 IsLoading(ref driver);
 
@@ -150,7 +152,7 @@ namespace JWatchDog.TouTiao
             TTStatsListN aDStatsList = new TTStatsListN();
 
             // 获取数据
-            var logs = driver.Manage().Logs.GetLog("performance")?.Where(o => o.Message.Contains("promotion/ad/get_bidding_account_list") && o.Message.Contains("\"method\":\"Network.responseReceived\""));
+            var logs = driver.Manage().Logs.GetLog("performance")?.Where(o => o.Message.Contains("promotion/ad/get_account_list") && o.Message.Contains("\"method\":\"Network.responseReceived\""));
             if (logs == null || logs.Count() <= 0)
             {
                 driver.Quit();
