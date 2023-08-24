@@ -37,6 +37,10 @@ namespace JWatchDog.TouTiao
 
     public class Data_listItem
     {
+        public override string ToString()
+        {
+            return advertiser_name;
+        }
         /// <summary>
         /// 
         /// </summary>

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +42,17 @@ namespace JWatchDog
             string logFile = LogDir + "\\" + DateTime.Now.Date.ToString("yyyy-MM-dd") + ".txt";
             if (OnLogWrite != null) { OnLogWrite(DateTime.Now.ToString() + " : " + s + "\r\n",level); }
             WriteFile(logFile,level.ToString() +"\t" + DateTime.Now.ToString() + "\t:\t" + s + "\r\n");
+        }
+        public void WriteScreenShot(ref EdgeDriver driver,string name)
+        {
+            try
+            {
+                Screenshot screenshot = (driver as ITakesScreenshot).GetScreenshot();
+                screenshot.SaveAsFile(Environment.CurrentDirectory + "\\Logs\\" + name + DateTime.Now.Ticks + ".png", ScreenshotImageFormat.Png);
+            }catch (Exception ex)
+            {
+                Write("写入屏幕截图失败:"+ex.Message, LogLevel.Error);
+            }
         }
         /// <summary>
         /// 写入文件内容

@@ -7,15 +7,15 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-	<Description>一个用以方便获取广告后台数据的工具，使用Selenium浏览器插件获取，目前支持今日头条巨量引擎管家账号推广页面数据获取。</Description>
+	<Description>一个用以方便获取广告后台数据的工具，使用Selenium浏览器插件获取，目前支持今日头条巨量引擎管家账号推广页面数据和快手磁力智投看板及跨账户报表数据。</Description>
 	<PackageProjectUrl>https://github.com/PisChiao/JWatchDog</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/PisChiao/JWatchDog</RepositoryUrl>
-	<PackageTags>TouTiao;AD;广告;今日头条;巨量引擎;数据爬虫</PackageTags>
+	<PackageTags>TouTiao;AD;广告;今日头条;巨量引擎;数据爬虫;KuaiShou;快手;磁力智投</PackageTags>
 	 <PackageReadmeFile>README.md</PackageReadmeFile>
-	 <Version>1.0.5</Version>
+	 <Version>1.1.0</Version>
 	 <Authors>PisChiao</Authors>
 	 <RepositoryType>git</RepositoryType>
-	 <PackageReleaseNotes>跟随头条后台调整了接口名称，由于浏览器升级，无头模式的参数也调整适配新版本。</PackageReleaseNotes>
+	 <PackageReleaseNotes>增加了对快手后台的适配，现在也可以获取快手后台的数据了</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using WebDriverManager.DriverConfigs.Impl;
 using WebDriverManager;
+using OpenQA.Selenium.Edge;
+using System.Diagnostics;
 
 namespace JWatchDog
 {
@@ -39,16 +41,15 @@ namespace JWatchDog
         /// <param name="performance">是否抓取网络通讯日志，默认为true</param>
         /// <param name="hideCommandPromptWindow">是否隐藏命令行窗口，默认为true</param>
         /// <returns>Chrome浏览器对象</returns>
-        public ChromeDriver SetupBrower(bool headless = true, bool performance = true, bool hideCommandPromptWindow = true)
+        public EdgeDriver SetupBrowser(bool headless = true, bool performance = true, bool hideCommandPromptWindow = true)
         {
-            new DriverManager().SetUpDriver(new ChromeConfig());
             string path = Encoding.UTF8.GetString( Encoding.Default.GetBytes(System.Environment.CurrentDirectory.ToString()));
-            ChromeDriverService service = ChromeDriverService.CreateDefaultService(path);
+            EdgeDriverService service = EdgeDriverService.CreateDefaultService(path);
             if(hideCommandPromptWindow)
             {
                 service.HideCommandPromptWindow = true;
             }
-            ChromeOptions options = new ChromeOptions();
+            EdgeOptions options = new EdgeOptions();
             options.AddArgument("--ignore-certificate-error");
             options.AddArgument("--ignore-ssl-errors");
             options.AddArgument("--no-sandbox");
@@ -69,7 +70,16 @@ namespace JWatchDog
                     IsCollectingNetworkEvents = true
                 };
             }
-            return new ChromeDriver(service, options); 
+            try
+            {
+                EdgeDriver driver = new EdgeDriver(service, options);
+                var _ = driver.ExecuteCdpCommand("Network.setCacheDisabled", new Dictionary<string, object>() { { "cacheDisabled", true } }) as Dictionary<string, object>;
+                return driver;
+            }catch
+            {
+                throw new Exception("启动浏览器失败，请点击关于->重置浏览器后重试");
+            }
+            
         }
     }
 }

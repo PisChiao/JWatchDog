@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 
 namespace JWatchDog.TouTiao
 {
@@ -12,7 +13,7 @@ namespace JWatchDog.TouTiao
         /// <param name="driver">浏览器驱动器</param>
         /// <param name="colName">列名</param>
         /// <returns></returns>
-        public static bool NeedCol(ref ChromeDriver driver, string colName)
+        public static bool NeedCol(ref EdgeDriver driver, string colName)
         {
             try
             {
@@ -48,7 +49,7 @@ namespace JWatchDog.TouTiao
         /// </summary>
         /// <param name="driver">浏览器驱动器</param>
         /// <param name="colName">列名</param>
-        public static void TryAddCol(ref ChromeDriver driver, string colName)
+        public static void TryAddCol(ref EdgeDriver driver, string colName)
         {
             IWebElement colConfig = driver.FindElement(By.ClassName("bui-icon-_promotion_cols"));
             driver.ExecuteScript("arguments[0].click();", colConfig);
