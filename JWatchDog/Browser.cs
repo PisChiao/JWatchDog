@@ -41,7 +41,7 @@ namespace JWatchDog
         /// <param name="performance">是否抓取网络通讯日志，默认为true</param>
         /// <param name="hideCommandPromptWindow">是否隐藏命令行窗口，默认为true</param>
         /// <returns>Chrome浏览器对象</returns>
-        public EdgeDriver SetupBrowser(bool headless = true, bool performance = true, bool hideCommandPromptWindow = true)
+        public EdgeDriver SetupBrowser(bool headless = true, bool performance = true, bool hideCommandPromptWindow = true,bool isEager = false)
         {
             string path = Encoding.UTF8.GetString( Encoding.Default.GetBytes(System.Environment.CurrentDirectory.ToString()));
             EdgeDriverService service = EdgeDriverService.CreateDefaultService(path);
@@ -50,6 +50,10 @@ namespace JWatchDog
                 service.HideCommandPromptWindow = true;
             }
             EdgeOptions options = new EdgeOptions();
+            if(isEager)
+            {
+                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
+            }
             options.AddArgument("--ignore-certificate-error");
             options.AddArgument("--ignore-ssl-errors");
             options.AddArgument("--no-sandbox");
@@ -73,13 +77,29 @@ namespace JWatchDog
             try
             {
                 EdgeDriver driver = new EdgeDriver(service, options);
-                var _ = driver.ExecuteCdpCommand("Network.setCacheDisabled", new Dictionary<string, object>() { { "cacheDisabled", true } }) as Dictionary<string, object>;
+                //var _ = driver.ExecuteCdpCommand("Network.setCacheDisabled", new Dictionary<string, object>() { { "cacheDisabled", true } }) as Dictionary<string, object>;
                 return driver;
-            }catch
+            }catch(Exception ex) 
             {
-                throw new Exception("启动浏览器失败，请点击关于->重置浏览器后重试");
+                throw new Exception("启动浏览器失败，请点击关于->重置浏览器后重试\r\n"+ex.Message);
             }
             
+        }
+
+        public static void InstallBrowserDriver()
+        {
+            try
+            {
+                string path = new DriverManager().SetUpDriver(new EdgeConfig());
+                FileInfo file = new FileInfo(path);
+                file.CopyTo(Encoding.UTF8.GetString(Encoding.Default.GetBytes(System.Environment.CurrentDirectory.ToString())) + "\\" + file.Name);
+                var driver = new EdgeDriver();
+                driver.Quit();
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

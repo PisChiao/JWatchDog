@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace JWatchDog.KuaiShou
 {
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
     public class AccountInfosItem
     {
         /// <summary>
@@ -19,7 +20,7 @@ namespace JWatchDog.KuaiShou
         /// <summary>
         /// 
         /// </summary>
-        public string? accountName { get; set; }
+        public string accountName { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -27,7 +28,7 @@ namespace JWatchDog.KuaiShou
         /// <summary>
         /// 
         /// </summary>
-        public string? agentName { get; set; }
+        public string agentName { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -52,6 +53,10 @@ namespace JWatchDog.KuaiShou
         /// 
         /// </summary>
         public decimal registerTime { get; set; }
+        public override string ToString()
+        {
+            return accountName;
+        }
     }
 
     public class KSOwnerInfo

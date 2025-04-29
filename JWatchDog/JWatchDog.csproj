@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -12,7 +12,7 @@
 	<RepositoryUrl>https://github.com/PisChiao/JWatchDog</RepositoryUrl>
 	<PackageTags>TouTiao;AD;广告;今日头条;巨量引擎;数据爬虫;KuaiShou;快手;磁力智投</PackageTags>
 	 <PackageReadmeFile>README.md</PackageReadmeFile>
-	 <Version>1.1.0</Version>
+	 <Version>1.1.2</Version>
 	 <Authors>PisChiao</Authors>
 	 <RepositoryType>git</RepositoryType>
 	 <PackageReleaseNotes>增加了对快手后台的适配，现在也可以获取快手后台的数据了</PackageReleaseNotes>

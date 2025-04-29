@@ -6,6 +6,13 @@
 
 ## 更新内容
 
+### 1.1.2
+调整了.NET版本号，当前包含了.NET8和.NET9
+增加了Browser中的public static void InstallBrowserDriver()方法用于安装浏览器驱动
+
+### 1.1.1
+调整了.NET版本号，当前为 .NET 9
+
 ### 1.1.0
 增加了对快手磁力智投后台的支持，可以获取“账户数据概览”页面的数据（JWatchDog.KuaiShou.DataSniffer）。
 

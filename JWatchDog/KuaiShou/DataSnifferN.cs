@@ -9,16 +9,18 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace JWatchDog.KuaiShou
 {
     public class DataSnifferN : DataSnifferBase
     {
         public DataSnifferN(string cacheDir, int browerPort) : base(cacheDir, browerPort) { }
-        public KSReportDetail GetData(int daysBeforeToday, string[] needCols, bool isDebug = false, bool isMonthlyData = false)
+        public KSReportDetail GetData(int daysBeforeToday, bool isDebug = false, bool isMonthlyData = false)
         {
             Browser browser = new Browser(CacheDir, BrowerPort);
             EdgeDriver driver = browser.SetupBrowser(!isDebug, true, !isDebug);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
             try
             {
                 //获取客户的信息，里面含有账户列表
@@ -29,7 +31,22 @@ namespace JWatchDog.KuaiShou
                     throw new Exception("无法获取到用户下属账户列表");
                 }
                 //进入跨账户报表页面
-                driver.Navigate().GoToUrl("https://ad.e.kuaishou.com/custom-report/preview/9157?crossAccount=true&__accountId__=" + ownerInfo.accountInfos[0].accountId.ToString());
+                driver.Navigate().GoToUrl("https://ad.e.kuaishou.com/custom-report/preview/?crossAccount=true&__accountId__=" + ownerInfo.accountInfos[0].accountId.ToString());
+                CloseAdLayer(ref driver);
+                Thread.Sleep(1000);
+                try
+                {
+                    // 首先检查页面数据容量,即使出错也不影响使用
+                    IWebElement pageSize = wait.Until(e => e.FindElement(By.CssSelector("div.ant-select-selector")));
+                    if (pageSize.GetAttribute("innerText") != "40 条/页")
+                    {
+                        pageSize.Click();
+                        Thread.Sleep(1000);
+                        IWebElement maxPageSize = wait.Until(e => e.FindElements(By.CssSelector("div.ant-select-item.ant-select-item-option")).Where(o => o.GetAttribute("title") == "40 条/页").FirstOrDefault()!);
+                        driver.ExecuteScript("arguments[0].click();", maxPageSize);
+                    }
+                }
+                catch (Exception ex) { Debug.WriteLine(ex); }
                 Thread.Sleep(1000);
                 ChooseDate(ref driver, daysBeforeToday, isMonthlyData);
                 Thread.Sleep(1000);
@@ -55,11 +72,12 @@ namespace JWatchDog.KuaiShou
             }
 
         }
-        private KSOwnerInfo ReadOwnerInfo(ref EdgeDriver driver)
+        public KSOwnerInfo ReadOwnerInfo(ref EdgeDriver driver)
         {
             driver.Navigate().GoToUrl("https://ad.e.kuaishou.com/monitor");
+            Thread.Sleep(1000); 
             driver.Navigate().Refresh();
-            IEnumerable<LogEntry>? logs = driver.Manage().Logs.GetLog("performance")?.Where(o => o.Message.Contains("rest/dsp/owner/info") && o.Message.Contains("\"method\":\"Network.responseReceived\""));
+            IEnumerable<LogEntry>? logs;
             for (int i = 0; i < 10; i++)
             {
                 try
@@ -118,6 +136,7 @@ namespace JWatchDog.KuaiShou
                     else
                     {
                         driver.ExecuteScript("arguments[0].click()", nextPage);
+                        Thread.Sleep(1000);
                         reportDetail.Add(ReadReport(ref driver));
                     }
                 }
@@ -139,12 +158,16 @@ namespace JWatchDog.KuaiShou
 
         private KSReportDetail ReadReport(ref EdgeDriver driver)
         {
-            driver.Navigate().Refresh();
+            IsLoading(ref driver);
             IEnumerable<LogEntry>? logs = driver.Manage().Logs.GetLog("performance")?.Where(o => o.Message.Contains("rest/dsp/portal/report/getDetail") && o.Message.Contains("\"method\":\"Network.responseReceived\""));
             for (int i = 0; i < 10; i++)
             {
                 try
                 {
+                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                    IWebElement refreshButton = wait.Until(e => e.FindElement(By.CssSelector("div.ant-card-extra")));
+                    refreshButton.Click();
+                    IsLoading(ref driver);
                     Thread.Sleep(1000);
                     logs = driver.Manage().Logs.GetLog("performance")?.Where(o => o.Message.Contains("rest/dsp/portal/report/getDetail") && o.Message.Contains("\"method\":\"Network.responseReceived\""));
                     if (logs == null || logs.Count() <= 0)
@@ -175,7 +198,7 @@ namespace JWatchDog.KuaiShou
                     continue;
                 }
             }
-            throw new Exception("ReadReport无法获取报表，可能是登录已过期");
+            throw new Exception("ReadReport无法获取报表，可能是登录已过期，或者没有投放数据产生");
         }
 
         private void ChooseDate(ref EdgeDriver driver, int daysBeforeToday, bool isMonthlyData = false)
@@ -220,6 +243,51 @@ namespace JWatchDog.KuaiShou
                 }
             }
             
+        }
+        private void CloseAdLayer(ref EdgeDriver driver)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            while (true)
+            {
+                Thread.Sleep(2000);
+                try
+                {
+                    ReadOnlyCollection<IWebElement> closeButtons = wait.Until(e => e.FindElements(By.TagName("button")));
+                    IWebElement closeButton = closeButtons.Where(o => o.GetAttribute("class").Contains("ant-modal-close")).FirstOrDefault()!;
+                    if (closeButton is null)
+                    {
+                        break;
+                    }
+                    driver.ExecuteScript("arguments[0].click();", closeButton);
+                }
+                catch (NoSuchElementException)
+                {
+                    break;
+                }
+                catch (WebDriverTimeoutException) { break; }
+            }
+        }
+        private void IsLoading(ref EdgeDriver driver)
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1));
+            for (int i = 0; i < 10; i++)
+            {
+                Thread.Sleep(1000);
+                try
+                {
+                    IReadOnlyCollection<IWebElement> loadingIcon = wait.Until(e => e.FindElement(By.XPath("//*[@id=\"monitorAccountOverview\"]/div[3]/div[2]/div")).FindElements(By.TagName("i")));
+                    if (loadingIcon.Count() > 0) { continue; } else { return; }
+                }
+                catch (WebDriverTimeoutException)
+                {
+                    return;
+                }
+                catch (NoSuchElementException)
+                {
+                    return;
+                }
+            }
+            throw new Exception("数据加载超时");
         }
     }
 }

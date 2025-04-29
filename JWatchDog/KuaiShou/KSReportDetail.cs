@@ -268,6 +268,8 @@ namespace JWatchDog.KuaiShou
 
     public class ResultListItem
     {
+        public string accountName { get; set; }
+        public string productName { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -315,7 +317,7 @@ namespace JWatchDog.KuaiShou
         /// <summary>
         /// 
         /// </summary>
-        public string eventPayPurchaseAmount { get; set; }
+        public double eventPayPurchaseAmount { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -324,6 +326,26 @@ namespace JWatchDog.KuaiShou
         /// 
         /// </summary>
         public double conversionCost { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public double eventPayRoi { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal eventNewUserPay { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public double eventNewUserPayCost { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public double eventNewUserPayRatio { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal eventAppInvoked { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -489,6 +511,18 @@ namespace JWatchDog.KuaiShou
         /// </summary>
         public string localStoreOrderConversionCost { get; set; }
         /// <summary>
+        /// 
+        /// </summary>
+        public decimal adLandingPageFromSubmitted { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal eventJs3 { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public decimal eventFormSubmit { get; set; }
+        /// <summary>
         /// 全部
         /// </summary>
         public string adScene { get; set; }
@@ -516,8 +550,6 @@ namespace JWatchDog.KuaiShou
         /// 
         /// </summary>
         public decimal accountId { get; set; }
-        public string accountName { get; set; }
-        public string productName { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -622,6 +654,10 @@ namespace JWatchDog.KuaiShou
         /// 其他
         /// </summary>
         public string ocpcActionType { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ocpcActionTypeName { get; set; }
         /// <summary>
         /// 
         /// </summary>
